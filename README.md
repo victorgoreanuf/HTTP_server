@@ -1,37 +1,97 @@
-[![progress-banner](https://backend.codecrafters.io/progress/http-server/eec63597-13df-49c6-8675-4074a9573610)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Simple HTTP Server
 
-This is a starting point for Python solutions to the
-["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
+This is a simple multithreaded HTTP server implemented in Python. It supports basic HTTP functionalities such as:
 
-[HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) is the
-protocol that powers the web. In this challenge, you'll build a HTTP/1.1 server
-that is capable of serving multiple clients.
+- Serving static files from a directory
+- Echoing text from URL paths
+- Returning the user-agent of incoming requests
+- Handling both `GET` and `POST` requests for files
 
-Along the way you'll learn about TCP servers,
-[HTTP request syntax](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html),
-and more.
+## Features
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+### 1. Serve Static Files
 
-# Passing the first stage
+- When launched with `--directory <path>`, the server will read files from the specified directory and store them in memory.
+- Clients can retrieve files via `GET /files/<filename>`.
+- Clients can upload new files via `POST /files/<filename>`.
 
-The entry point for your HTTP server implementation is in `app/main.py`. Study
-and uncomment the relevant code, and push your changes to pass the first stage:
+### 2. Echo Functionality
+
+- Accessing `/echo/<message>` will return `<message>` in the response body.
+
+### 3. User-Agent Retrieval
+
+- Sending a request to `/user-agent` will return the `User-Agent` header from the request.
+
+### 4. Root Path Handling
+
+- Requests to `/` will receive a simple `200 OK` response.
+
+### 5. Multithreading
+
+- The server handles multiple client requests concurrently using threads.
+
+## Usage
+
+### Running the Server
 
 ```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
+python3 server.py --directory /path/to/your/files
 ```
 
-Time to move on to the next stage!
+- Replace `/path/to/your/files` with the actual directory you want to serve.
+- The server will start listening on `localhost:4221`.
 
-# Stage 2 & beyond
+### Example Requests
 
-Note: This section is for stages 2 and beyond.
+#### Get a File
 
-1. Ensure you have `python (3.11)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `app/main.py`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+```sh
+curl -X GET http://localhost:4221/files/example.txt
+```
+
+#### Upload a File
+
+```sh
+curl -X POST --data "Hello, World!" http://localhost:4221/files/newfile.txt
+```
+
+#### Echo a Message
+
+```sh
+curl -X GET http://localhost:4221/echo/hello
+```
+
+Response:
+
+```sh
+hello
+```
+
+#### Get User-Agent
+
+```sh
+curl -X GET -H "User-Agent: MyBrowser" http://localhost:4221/user-agent
+```
+
+Response:
+
+```sh
+MyBrowser
+```
+
+## Error Handling
+
+- `404 Not Found`: If the requested resource does not exist.
+- `400 Bad Request`: If the request is malformed.
+- `500 Internal Server Error`: If an unexpected error occurs.
+
+## Stopping the Server
+
+- Press `CTRL + C` to stop the server safely.
+
+## Notes
+
+- The server supports only local requests on `localhost:4221`.
+- Large file handling should be optimized for better memory usage.
+- Consider implementing HTTPS for security in production environments.
