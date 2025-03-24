@@ -1,3 +1,7 @@
+Here's the updated README with the new `Accept-Encoding` functionality explained:
+
+---
+
 # Simple HTTP Server
 
 This is a simple multithreaded HTTP server implemented in Python. It supports basic HTTP functionalities such as:
@@ -6,6 +10,7 @@ This is a simple multithreaded HTTP server implemented in Python. It supports ba
 - Echoing text from URL paths
 - Returning the user-agent of incoming requests
 - Handling both `GET` and `POST` requests for files
+- **Supporting `Accept-Encoding` for gzip compression**
 
 ## Features
 
@@ -30,6 +35,13 @@ This is a simple multithreaded HTTP server implemented in Python. It supports ba
 ### 5. Multithreading
 
 - The server handles multiple client requests concurrently using threads.
+
+### 6. **Gzip Compression with `Accept-Encoding`**
+
+- The server now supports the `Accept-Encoding` header.
+- Clients can send requests with `Accept-Encoding: <encoding-types>` where `<encoding-types>` can be a **comma-separated list** (e.g., `"gzip, deflate"`).
+- The server will check for supported encodings and **currently supports only `gzip`**.
+- If `gzip` is found in the list, the response body will be compressed, and the header `Content-Encoding: gzip` will be added.
 
 ## Usage
 
@@ -79,6 +91,23 @@ Response:
 ```sh
 MyBrowser
 ```
+
+#### Request with `Accept-Encoding: gzip`
+
+```sh
+curl -v -H "Accept-Encoding: gzip" http://localhost:4221/echo/hello
+```
+
+Response Headers:
+
+```sh
+< HTTP/1.1 200 OK
+< Content-Type: text/plain
+< Content-Encoding: gzip
+< Content-Length: 23
+```
+
+The body will be compressed in gzip format.
 
 ## Error Handling
 
